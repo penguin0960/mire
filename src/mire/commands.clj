@@ -56,6 +56,28 @@
          (str "You dropped the " thing "."))
      (str "You're not carrying a " thing "."))))
 
+(defn changename
+  "If you want a new name."
+  [newname]
+  (binding [player/*name* newname])
+  (str "Now your name is " newname))
+  
+(defn whoami
+  "Remember your name."
+  []
+  (str "Your name is "player/*name*))
+  
+(defn meet
+  "Meet other players by saying your name."
+  []
+  (let [message (str "Hi, my name is " player/*name*)]
+    (doseq [inhabitant (disj @(:inhabitants @player/*current-room*)
+                             player/*name*)]
+      (binding [*out* (player/streams inhabitant)]
+        (println message)
+        (println player/prompt)))
+    (str "You said " message)))
+  	
 (defn inventory
   "See what you've got."
   []
@@ -103,7 +125,10 @@
                "detect" detect
                "look" look
                "say" say
-               "help" help})
+               "help" help
+               "changename" changename
+               "whoami" whoami
+               "meet" meet})
 
 ;; Command handling
 
